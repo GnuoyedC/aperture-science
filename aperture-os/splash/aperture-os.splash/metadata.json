@@ -1,0 +1,12 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [{ "Name": "Quatzler" }],
+        "Description": "Aperture OS initialisation sequence after login",
+        "Id": "aperture-os.splash",
+        "License": "GPL-3.0-or-later",
+        "Name": "Aperture OS",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-APIVersion": "2"
+}

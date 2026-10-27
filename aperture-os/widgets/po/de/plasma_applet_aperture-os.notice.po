@@ -1,0 +1,31 @@
+# German translation of aperture-os.notice (Aperture OS).
+# Source strings are English; this file restores the original German UI.
+msgid ""
+msgstr ""
+"Project-Id-Version: aperture-os.notice\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "Also show low-priority notifications"
+msgstr "Auch Meldungen mit niedriger Priorität zeigen"
+
+msgid "Colouring:"
+msgstr "Einfärbung:"
+
+msgid "Detect error/warning/success from keywords"
+msgstr "Fehler/Warnung/Erfolg anhand von Stichwörtern erkennen"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Motion:"
+msgstr "Bewegung:"
+
+msgid "Number of notices:"
+msgstr "Anzahl Meldungen:"
+
+msgid "Reduce animations (no pulsing for critical notices)"
+msgstr "Animationen reduzieren (kein Pulsieren bei kritischen Meldungen)"

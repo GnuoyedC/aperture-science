@@ -1,0 +1,9 @@
+# Plasma 6.6.6 - 2026-10-04
+72688c87f5a8dc9eb316b3a18ae07e841482b809a34f50d6b89e919f97334c22  /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/LockScreen.qml
+8793ac1127ada82f12c4e6f0174b239d85146676188f94a21f1c67afe1541f04  /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/LockScreenUi.qml
+ca4116aa7e10fd57f6bdfd648c647751c45fb4933982b3bde2ff231a2ce4497f  /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/MainBlock.qml
+dda1789a472b1e87bdf29a922a056678c9a7ff13aab6ad80244fb6391e3ccec5  /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/LockOsd.qml
+fc2de879d76e7d2f37292fb8c79283b5b7dae894de44539270a53dbd4c9927b0  /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/MediaControls.qml
+cb4ac977b1eb3f852bcdcebec959cc19fc9e950fd92dcdd3446f579c85f8ae99  /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/NoPasswordUnlock.qml
+0277acc0ec20585b66a65636bb8b726bab5deb1eb14ab250224d9fd2eb2adafd  /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout/Logout.qml
+a565df18461f8a5dba6875d324a7cad06240ce2ff5564692e846591964b62f9d  /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout/LogoutButton.qml

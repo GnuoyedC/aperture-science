@@ -1,0 +1,13 @@
+# Template: guard/install.sh substitutes @GREETER@ with the resolved kscreenlocker_greet path
+# (systemd .path units cannot use variables, and the path differs per distro/arch).
+[Unit]
+Description=Aperture OS: watch Plasma lock/logout screen files for package updates
+
+[Path]
+PathModified=/usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen
+PathModified=/usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout
+PathModified=@GREETER@
+Unit=aperture-plasma-guard.service
+
+[Install]
+WantedBy=graphical-session.target

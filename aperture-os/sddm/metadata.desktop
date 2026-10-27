@@ -1,0 +1,14 @@
+[SddmGreeterTheme]
+Name=Aperture Protocol
+Description=Animated Aperture Laboratories / Portal inspired test chamber login console.
+Author=Quatzler
+License=MIT (code); see README for asset notes
+Type=sddm-theme
+Version=1.0.0
+Website=https://github.com/sddm/sddm
+Screenshot=assets/preview.jpg
+Theme-Id=aperture-protocol
+Theme-API=2.0
+QtVersion=6
+MainScript=Main.qml
+ConfigFile=theme.conf

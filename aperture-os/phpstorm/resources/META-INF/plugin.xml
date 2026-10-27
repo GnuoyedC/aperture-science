@@ -1,0 +1,16 @@
+<idea-plugin>
+  <id>aperture-os.phpstorm-theme</id>
+  <name>Aperture OS Theme</name>
+  <version>1.0.0</version>
+  <vendor>Aperture OS</vendor>
+  <description><![CDATA[
+    <p>Aperture OS: calm industrial test-chamber UI theme and editor color scheme.</p>
+    <p>Orange = interaction/focus, blue = information. Generated from design tokens.</p>
+  ]]></description>
+  <idea-version since-build="253"/>
+  <depends>com.intellij.modules.platform</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <themeProvider id="aperture-os.islands-dark" path="/aperture-os.theme.json" targetUi="islands"/>
+    <bundledColorScheme id="aperture-os.scheme" path="/ApertureOS"/>
+  </extensions>
+</idea-plugin>

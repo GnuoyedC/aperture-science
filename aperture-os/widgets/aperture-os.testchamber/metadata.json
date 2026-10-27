@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Quatzler"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Aperture OS: test chamber status panel – core, portal, CPU, memory, uptime and more (selectable rows)",
+        "Description[de]": "Aperture OS: Statuspanel der Testkammer – Core, Portal, CPU, Speicher, Betriebszeit u. v. m. (Zeilen wählbar)",
+        "Icon": "computer-laptop",
+        "Id": "aperture-os.testchamber",
+        "License": "GPL-3.0-or-later",
+        "Name": "Aperture Test Chamber",
+        "Version": "1.0.0",
+        "Website": ""
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.idea/
+*.swp
+*~
+# dist/ und resources/ werden bewusst eingecheckt (Installation ohne Build)

@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Authors": [{ "Name": "Quatzler" }],
+        "Id": "ApertureTestChamber",
+        "License": "Private use only",
+        "Name": "Aperture Test Chamber 01"
+    }
+}

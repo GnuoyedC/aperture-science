@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/Wallpaper",
+    "KPlugin": {
+        "Authors": [{ "Name": "Quatzler" }],
+        "Description": "Aperture test chamber with very subtle ambience: core pulse, portal glow, slow light drift",
+        "Icon": "preferences-desktop-wallpaper",
+        "Id": "aperture-os.chamber",
+        "License": "GPL-3.0-or-later",
+        "Name": "Aperture Test Chamber (animated)",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

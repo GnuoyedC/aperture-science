@@ -1,0 +1,145 @@
+# German translation of aperture-os.testchamber (Aperture OS).
+# Source strings are English; this file restores the original German UI.
+msgid ""
+msgstr ""
+"Project-Id-Version: aperture-os.testchamber\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "Appearance"
+msgstr "Darstellung"
+
+msgid "CORE – core status (follows the CPU temperature)"
+msgstr "CORE – Kernstatus (folgt der CPU-Temperatur)"
+
+msgid "CPU LOAD – usage"
+msgstr "CPU LOAD – Auslastung"
+
+msgid "CPU TEMP – temperature"
+msgstr "CPU TEMP – Temperatur"
+
+msgid "Chamber number:"
+msgstr "Kammernummer:"
+
+msgid "Compact (tighter rows, no detail lines)"
+msgstr "Kompakt (engere Zeilen, ohne Detailzeilen)"
+
+msgid "DISK / – root file system usage"
+msgstr "DISK / – Belegung des Wurzeldateisystems"
+
+msgid "Density:"
+msgstr "Dichte:"
+
+msgid "FAN – fan speed"
+msgstr "FAN – Lüfterdrehzahl"
+
+msgid "GPU – usage and temperature"
+msgstr "GPU – Auslastung und Temperatur"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "HOST – footer with host name"
+msgstr "HOST – Fußzeile mit Rechnername"
+
+msgid "LOAD AVG – load average 1/5/15 min"
+msgstr "LOAD AVG – Durchschnittslast 1/5/15 min"
+
+msgid "MEMORY – physical memory"
+msgstr "MEMORY – Arbeitsspeicher"
+
+msgid "Memory:"
+msgstr "Speicher:"
+
+msgid "Motion:"
+msgstr "Bewegung:"
+
+msgid "NETWORK – download/upload rate"
+msgstr "NETWORK – Download-/Upload-Rate"
+
+msgid "Network:"
+msgstr "Netzwerk:"
+
+msgid "PORTAL – portal status (decoration)"
+msgstr "PORTAL – Portalstatus (Dekoration)"
+
+msgid "POWER – battery level"
+msgstr "POWER – Akkustand"
+
+msgid "Processor:"
+msgstr "Prozessor:"
+
+msgid "Reduce animations (LED does not pulse)"
+msgstr "Animationen reduzieren (LED pulsiert nicht)"
+
+msgid "Rows this computer has no sensor for (e.g. no battery, no GPU values) are hidden automatically."
+msgstr "Zeilen, für die dieser Rechner keinen Sensor hat (z. B. kein Akku, keine GPU-Werte), werden automatisch ausgeblendet."
+
+msgid "SESSION / KERNEL – Plasma version, window system, kernel"
+msgstr "SESSION / KERNEL – Plasma-Version, Fenstersystem, Kernel"
+
+msgid "SWAP – swap space"
+msgstr "SWAP – Auslagerungsspeicher"
+
+msgid "Temperature warning from (°C):"
+msgstr "Temperaturwarnung ab (°C):"
+
+msgid "UPTIME – uptime"
+msgstr "UPTIME – Betriebszeit"
+
+msgid "Task bar"
+msgstr "Taskleiste"
+
+msgid "Show in the task bar:"
+msgstr "In der Taskleiste anzeigen:"
+
+msgid "CH01 – chamber number"
+msgstr "CH01 – Kammernummer"
+
+msgid "CPU temperature"
+msgstr "CPU-Temperatur"
+
+msgid "CPU usage"
+msgstr "CPU-Auslastung"
+
+msgid "Memory usage"
+msgstr "Arbeitsspeicher-Belegung"
+
+msgid "Swap usage"
+msgstr "Swap-Belegung"
+
+msgid "Disk usage (root file system)"
+msgstr "Datenträger-Belegung (Wurzeldateisystem)"
+
+msgid "GPU usage"
+msgstr "GPU-Auslastung"
+
+msgid "Fan speed"
+msgstr "Lüfterdrehzahl"
+
+msgid "Battery level"
+msgstr "Akkustand"
+
+msgid "Download/upload rate"
+msgstr "Download-/Upload-Rate"
+
+msgid "Uptime"
+msgstr "Betriebszeit"
+
+msgid "LED (follows the CPU temperature)"
+msgstr "LED (folgt der CPU-Temperatur)"
+
+msgid "Click:"
+msgstr "Klick:"
+
+msgid "Open the details popup"
+msgstr "Details-Popup öffnen"
+
+msgid "Stats without a sensor on this computer are skipped. Independent of the popup rows below."
+msgstr "Werte ohne Sensor auf diesem Rechner werden übersprungen. Unabhängig von den Popup-Zeilen unten."
+
+msgid "Popup rows"
+msgstr "Popup-Zeilen"

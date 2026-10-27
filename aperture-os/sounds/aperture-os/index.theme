@@ -1,0 +1,11 @@
+[Sound Theme]
+Name=Aperture OS
+Name[de]=Aperture OS
+Comment=Aperture Laboratories system sounds (Portal 2 SFX, private use only)
+Comment[de]=Aperture-Laboratories-Systemklänge (Portal-2-Effekte, nur private Nutzung)
+Inherits=ocean,freedesktop
+Directories=stereo
+Example=theme-demo
+
+[stereo]
+OutputProfile=stereo

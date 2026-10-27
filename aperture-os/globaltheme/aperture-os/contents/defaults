@@ -1,0 +1,30 @@
+# Aperture OS global theme defaults.
+# Icons and cursors are intentionally NOT set (recommended cursor: Aperture-cursors, opt-in),
+# so applying this theme keeps whatever you use today.
+
+[kdeglobals][KDE]
+widgetStyle=Breeze
+
+[kdeglobals][General]
+ColorScheme=ApertureOS
+
+[plasmarc][Theme]
+name=aperture-os
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.kwin.aurorae.v2
+theme=__aurorae__svg__aperture-os
+BorderSize=Normal
+BorderSizeAuto=false
+
+[kwinrc][WindowSwitcher]
+LayoutName=org.kde.breeze.desktop
+
+[kwinrc][DesktopSwitcher]
+LayoutName=org.kde.breeze.desktop
+
+[KSplash]
+Theme=aperture-os
+
+[Wallpaper]
+Image=ApertureTestChamber

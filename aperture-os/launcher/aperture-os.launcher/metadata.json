@@ -1,0 +1,23 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Quatzler"
+            }
+        ],
+        "Category": "Application Launchers",
+        "Description": "Aperture OS: application launcher with search, favorites, categories and session actions",
+        "Description[de]": "Aperture OS: Anwendungsstarter mit Suche, Favoriten, Kategorien und Sitzungsaktionen",
+        "Icon": "aperture-os",
+        "Id": "aperture-os.launcher",
+        "License": "GPL-3.0-or-later",
+        "Name": "Aperture Launcher",
+        "Version": "1.0.0",
+        "Website": ""
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.launchermenu"
+    ]
+}

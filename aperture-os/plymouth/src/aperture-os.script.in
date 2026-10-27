@@ -1,0 +1,422 @@
+/*
+    Aperture OS – Plymouth boot screen (script plugin).
+    Generated from src/aperture-os.script.in by tools/build.py – edit the template, not the copy.
+
+    Layout (centred on every display): rotating iris, APERTURE LABORATORIES, subtitle,
+    progress line + status with blinking cursor. The LUKS prompt replaces line and status.
+    All fixed texts are PNGs (the initramfs only ships the Ubuntu font); prompt and
+    messages use Image.Text with the default font.
+
+    SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
+global.reduce_motion = @REDUCE_MOTION@;
+global.iris_count = @IRIS_FRAMES@;
+global.font = "Ubuntu 12";
+global.debug = 0;    // install.sh --test sets 1 in the installed copy: crosshair, display frames, values
+
+// ------------------------------------------------------------------ background
+fun apply_background() {
+    Window.SetBackgroundTopColor(@BG@);
+    Window.SetBackgroundBottomColor(@BG@);
+}
+apply_background();
+global.background_applied = 0;
+
+Plymouth.SetRefreshRate(25);
+
+// ------------------------------------------------------------------ assets
+global.iris = [];
+for (i = 0; i < iris_count; i++)
+    global.iris[i] = Image("iris-" + i + ".png");
+
+global.img = [];
+img.title = Image("title.png");
+img.subtitle = Image("subtitle.png");
+img.track = Image("rail-track.png");
+img.fill = Image("rail-fill.png");
+img.cursor = Image("cursor.png");
+img.entry = Image("entry.png");
+img.bullet = Image("bullet.png");
+img.caret = Image("caret.png");
+img.lock_title = Image("lock-title.png");
+img.lock_hint = Image("lock-hint.png");
+
+global.mode = Plymouth.GetMode();
+if (mode == "shutdown")
+    img.status = Image("status-shutdown.png");
+else if (mode == "reboot")
+    img.status = Image("status-reboot.png");
+else if (mode == "updates" || mode == "system-upgrade")
+    img.status = Image("status-updates.png");
+else if (mode == "firmware-upgrade")
+    img.status = Image("status-firmware.png");
+else
+    img.status = Image("status-boot.png");
+
+// progress is only meaningful while booting / updating; otherwise the line scans
+global.determinate = 1;
+if (mode == "shutdown" || mode == "reboot" || mode == "firmware-upgrade")
+    global.determinate = 0;
+
+// ------------------------------------------------------------------ sprites
+global.s = [];
+s.iris = Sprite(iris[0]);
+s.title = Sprite(img.title);
+s.subtitle = Sprite(img.subtitle);
+s.track = Sprite(img.track);
+s.fill = Sprite();
+s.status = Sprite(img.status);
+s.cursor = Sprite(img.cursor);
+s.message = Sprite();
+
+// password / question dialog (hidden until asked)
+s.lock_title = Sprite(img.lock_title);
+s.prompt = Sprite();
+s.entry = Sprite(img.entry);
+s.entry_text = Sprite();
+s.caret = Sprite(img.caret);
+s.lock_hint = Sprite(img.lock_hint);
+s.caps = Sprite();
+global.bullets = [];
+
+global.L = [];   // layout values, recomputed on display hotplug
+
+fun cx_of(image) {
+    return Math.Int(L.cx - image.GetWidth() / 2);
+}
+
+fun layout() {
+    // Plymouth centres all displays on top of each other, so the centre of any single display is
+    // the centre of all. Window.GetX()/GetY() without index are NOT reliable (24.004 returns the
+    // offset of display 0, e.g. 320/120 for 1920x1200 next to 2560x1440) -> use display 0.
+    if (Window.GetWidth(0)) {
+        L.cx = Window.GetX(0) + Window.GetWidth(0) / 2;
+        L.cy = Window.GetY(0) + Window.GetHeight(0) / 2;
+    } else {
+        L.cx = Window.GetX() + Window.GetWidth() / 2;
+        L.cy = Window.GetY() + Window.GetHeight() / 2;
+    }
+    L.min_h = Window.GetHeight();
+    for (local.d = 0; Window.GetHeight(d); d++)
+        L.min_h = Math.Min(L.min_h, Window.GetHeight(d));
+
+    // iris centre at 40 % of the smallest display's height
+    local.y = L.cy - L.min_h * 0.10 - iris[0].GetHeight() / 2;
+
+    s.iris.SetPosition(cx_of(iris[0]), Math.Int(y), 10);
+    y = y + iris[0].GetHeight() + 26;
+    s.title.SetPosition(cx_of(img.title), Math.Int(y), 10);
+    y = y + img.title.GetHeight() + 6;
+    s.subtitle.SetPosition(cx_of(img.subtitle), Math.Int(y), 10);
+    y = y + img.subtitle.GetHeight() + 34;
+    L.content_y = y;
+
+    // normal state: progress line + status
+    L.track_x = cx_of(img.track);
+    L.track_y = Math.Int(y);
+    s.track.SetPosition(L.track_x, L.track_y, 10);
+    s.fill.SetPosition(L.track_x, L.track_y, 11);
+    local.sy = Math.Int(y + 2 + 18);
+    s.status.SetPosition(cx_of(img.status), sy, 10);
+    s.cursor.SetPosition(Math.Int(L.cx + img.status.GetWidth() / 2 + 6), sy, 10);
+
+    // dialog state: title, prompt (dynamic), entry, hint
+    s.lock_title.SetPosition(cx_of(img.lock_title), Math.Int(y), 20);
+    L.prompt_y = Math.Int(y + img.lock_title.GetHeight() + 12);
+    L.entry_x = cx_of(img.entry);
+    L.entry_y = Math.Int(L.prompt_y + 22 + 10);
+    s.entry.SetPosition(L.entry_x, L.entry_y, 20);
+    L.hint_y = Math.Int(L.entry_y + img.entry.GetHeight() + 12);
+    s.lock_hint.SetPosition(cx_of(img.lock_hint), L.hint_y, 20);
+    L.bullet_x = L.entry_x + 16;
+    L.bullet_y = Math.Int(L.entry_y + (img.entry.GetHeight() - img.bullet.GetHeight()) / 2);
+    L.bullet_step = img.bullet.GetWidth() + 6;
+    L.bullet_max = Math.Int((img.entry.GetWidth() - 32 - img.caret.GetWidth()) / L.bullet_step);
+
+    L.message_y = Math.Int(L.cy + L.min_h / 2 - 72);
+
+    // re-place dynamic content
+    for (local.i = 0; bullets[i]; i++)
+        bullets[i].SetPosition(L.bullet_x + i * L.bullet_step, L.bullet_y, 21);
+    if (s.prompt.GetImage())
+        s.prompt.SetPosition(cx_of(s.prompt.GetImage()), L.prompt_y, 20);
+    if (s.message.GetImage())
+        s.message.SetPosition(cx_of(s.message.GetImage()), L.message_y, 30);
+    if (s.caps.GetImage())
+        s.caps.SetPosition(cx_of(s.caps.GetImage()), Math.Int(L.hint_y + 24), 20);
+    global.fill_width = -1;   // force redraw of the progress fill
+}
+
+// ------------------------------------------------------------------ state
+global.dialog = "none";       // none | password | question
+global.tick = 0;
+global.iris_index = 0;
+global.progress_target = 0;
+global.progress_now = 0;
+global.fill_width = -1;
+global.bullet_count = 0;
+
+fun show_normal(o) {
+    s.track.SetOpacity(o);
+    s.fill.SetOpacity(o);
+    s.status.SetOpacity(o);
+    s.cursor.SetOpacity(o);
+}
+
+fun show_dialog(o, is_password) {
+    s.prompt.SetOpacity(o);
+    s.entry.SetOpacity(o);
+    s.caret.SetOpacity(o);
+    if (is_password) {
+        s.lock_title.SetOpacity(o);
+        s.lock_hint.SetOpacity(o);
+        s.entry_text.SetOpacity(0);
+    } else {
+        s.lock_title.SetOpacity(0);
+        s.lock_hint.SetOpacity(0);
+        s.entry_text.SetOpacity(o);
+    }
+    if (!o) {
+        for (local.i = 0; bullets[i]; i++)
+            bullets[i].SetOpacity(0);
+        s.caps.SetOpacity(0);
+    }
+}
+
+// progress fill: width in px; 'scan' draws a moving segment instead
+fun draw_fill(x, w) {
+    if (w < 1) {
+        s.fill.SetOpacity(0);
+        return;
+    }
+    if (w != fill_width) {
+        s.fill.SetImage(img.fill.Scale(w, img.fill.GetHeight()));
+        global.fill_width = w;
+    }
+    s.fill.SetPosition(L.track_x + x, L.track_y, 11);
+    if (dialog == "none")
+        s.fill.SetOpacity(1);
+}
+
+fun set_prompt(text) {
+    if (text) {
+        s.prompt.SetImage(Image.Text(text, @MUTED@, 1, font));
+        s.prompt.SetPosition(cx_of(s.prompt.GetImage()), L.prompt_y, 20);
+        s.prompt.SetOpacity(1);
+    } else {
+        s.prompt.SetOpacity(0);
+    }
+}
+
+fun place_caret(x) {
+    s.caret.SetPosition(Math.Int(x), Math.Int(L.entry_y + (img.entry.GetHeight() - img.caret.GetHeight()) / 2), 21);
+}
+
+fun update_caps() {
+    if (Plymouth.GetCapslockState()) {
+        if (!s.caps.GetImage()) {
+            s.caps.SetImage(Image.Text("CAPS LOCK", @ERROR@, 1, font));
+            s.caps.SetPosition(cx_of(s.caps.GetImage()), Math.Int(L.hint_y + 24), 20);
+        }
+        s.caps.SetOpacity(1);
+    } else {
+        s.caps.SetOpacity(0);
+    }
+}
+
+// --- debug overlay (test mode only): where does Plymouth put each display?
+global.dbg = [];
+fun debug_line(x, y, w, h) {
+    local.sp = Sprite(img.fill.Scale(Math.Max(1, w), Math.Max(1, h)));
+    sp.SetPosition(Math.Int(x), Math.Int(y), 9000);
+    return sp;
+}
+fun debug_overlay() {
+    for (local.k = 0; dbg[k]; k++)
+        dbg[k].SetOpacity(0);
+    global.dbg = [];
+    local.n = 0;
+    // crosshair through the computed centre (global coordinates)
+    dbg[n] = debug_line(L.cx, L.cy - Window.GetHeight() / 2, 1, Window.GetHeight());
+    n = n + 1;
+    dbg[n] = debug_line(L.cx - Window.GetWidth() / 2, L.cy, Window.GetWidth(), 1);
+    n = n + 1;
+    local.info = "all: x=" + Window.GetX() + " y=" + Window.GetY() + " w=" + Window.GetWidth() + " h=" + Window.GetHeight() + " cx=" + L.cx + " cy=" + L.cy;
+    for (local.i = 0; Window.GetWidth(i); i++) {
+        local.x = Window.GetX(i); local.y = Window.GetY(i);
+        local.w = Window.GetWidth(i); local.h = Window.GetHeight(i);
+        dbg[n] = debug_line(x, y, w, 2);
+        n = n + 1;
+        dbg[n] = debug_line(x, y + h - 2, w, 2);
+        n = n + 1;
+        dbg[n] = debug_line(x, y, 2, h);
+        n = n + 1;
+        dbg[n] = debug_line(x + w - 2, y, 2, h);
+        n = n + 1;
+        // own centre of this display (short cross)
+        dbg[n] = debug_line(x + w / 2 - 20, y + h / 2, 40, 1);
+        n = n + 1;
+        dbg[n] = debug_line(x + w / 2, y + h / 2 - 20, 1, 40);
+        n = n + 1;
+        local.label = Sprite(Image.Text("display " + i + ": x=" + x + " y=" + y + " w=" + w + " h=" + h + "   " + info, @TEXT@, 1, font));
+        label.SetPosition(Math.Int(x + 12), Math.Int(y + 12), 9001);
+        dbg[n] = label;
+        n = n + 1;
+    }
+}
+
+layout();
+if (debug) debug_overlay();
+show_dialog(0, 1);
+draw_fill(0, 0);
+
+// ------------------------------------------------------------------ callbacks
+fun refresh_callback() {
+    if (!background_applied) {
+        // some GPUs draw the first background too early – repeat once
+        global.background_applied = 1;
+        apply_background();
+    }
+    global.tick = tick + 1;
+
+    if (!reduce_motion) {
+        // 25 Hz refresh: one iris step (1.5 deg) every 2 ticks -> 45 deg in 2.4 s
+        local.f = Math.Int(tick / 2) % iris_count;
+        if (f != iris_index) {
+            s.iris.SetImage(iris[f]);
+            global.iris_index = f;
+        }
+    }
+
+    local.blink = 1;
+    if (!reduce_motion && Math.Int(tick / 12) % 2)
+        blink = 0;
+
+    if (dialog == "none") {
+        s.cursor.SetOpacity(blink);
+        local.w = img.track.GetWidth();
+        if (determinate) {
+            // ease towards the reported progress
+            global.progress_now = progress_now + (progress_target - progress_now) * 0.12;
+            draw_fill(0, Math.Int(w * Math.Clamp(progress_now, 0, 1)));
+        } else if (reduce_motion) {
+            draw_fill(0, w);
+        } else {
+            local.seg = 96;
+            local.pos = (Math.Sin(tick * 0.06) + 1) / 2 * (w - seg);
+            draw_fill(Math.Int(pos), seg);
+        }
+    } else {
+        s.caret.SetOpacity(blink);
+        if (dialog == "password")
+            update_caps();
+    }
+}
+Plymouth.SetRefreshFunction(refresh_callback);
+
+fun boot_progress_callback(duration, progress) {
+    global.progress_target = progress;
+}
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+
+fun system_update_callback(progress) {
+    global.determinate = 1;
+    global.progress_target = progress / 100;
+}
+Plymouth.SetSystemUpdateFunction(system_update_callback);
+
+fun display_password_callback(prompt, count) {
+    if (dialog != "password") {
+        global.dialog = "password";
+        show_normal(0);
+        show_dialog(1, 1);
+    }
+    set_prompt(prompt);
+
+    local.n = Math.Min(count, L.bullet_max);
+    for (local.i = 0; i < n || bullets[i]; i++) {
+        if (!bullets[i]) {
+            global.bullets[i] = Sprite(img.bullet);
+            bullets[i].SetPosition(L.bullet_x + i * L.bullet_step, L.bullet_y, 21);
+        }
+        if (i < n)
+            bullets[i].SetOpacity(1);
+        else
+            bullets[i].SetOpacity(0);
+    }
+    place_caret(L.bullet_x + n * L.bullet_step);
+    update_caps();
+}
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+fun display_question_callback(prompt, entry) {
+    if (dialog != "question") {
+        global.dialog = "question";
+        show_normal(0);
+        show_dialog(1, 0);
+    }
+    set_prompt(prompt);
+    local.x = L.bullet_x;
+    if (entry) {
+        s.entry_text.SetImage(Image.Text(entry, @TEXT@, 1, font));
+        s.entry_text.SetPosition(L.bullet_x,
+            Math.Int(L.entry_y + (img.entry.GetHeight() - s.entry_text.GetImage().GetHeight()) / 2), 21);
+        x = x + s.entry_text.GetImage().GetWidth() + 2;
+        s.entry_text.SetOpacity(1);
+    } else {
+        s.entry_text.SetOpacity(0);
+    }
+    place_caret(x);
+}
+Plymouth.SetDisplayQuestionFunction(display_question_callback);
+
+fun display_normal_callback() {
+    if (dialog != "none") {
+        show_dialog(0, dialog == "password");
+        global.dialog = "none";
+        show_normal(1);
+        global.fill_width = -1;
+    }
+}
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+
+// --- messages (e.g. cryptsetup errors) at the bottom; errors in red
+fun contains(text, word) {
+    for (local.a = 0; String(text).CharAt(a); a++) {
+        local.b = 0;
+        while (String(word).CharAt(b) && String(text).CharAt(a + b) == String(word).CharAt(b))
+            b++;
+        if (!String(word).CharAt(b))
+            return 1;
+    }
+    return 0;
+}
+
+fun display_message_callback(text) {
+    if (!text) return;
+    if (contains(text, "ERROR") || contains(text, "rror") || contains(text, "failed") || contains(text, "bad password"))
+        s.message.SetImage(Image.Text(text, @ERROR@, 1, font));
+    else
+        s.message.SetImage(Image.Text(text, @MUTED@, 1, font));
+    s.message.SetPosition(cx_of(s.message.GetImage()), L.message_y, 30);
+    s.message.SetOpacity(1);
+}
+Plymouth.SetDisplayMessageFunction(display_message_callback);
+
+fun hide_message_callback(text) {
+    s.message.SetOpacity(0);
+}
+Plymouth.SetHideMessageFunction(hide_message_callback);
+
+fun hotplug_callback() {
+    layout();
+    if (debug) debug_overlay();
+}
+Plymouth.SetDisplayHotplugFunction(hotplug_callback);
+
+fun quit_callback() {
+    if (determinate)
+        draw_fill(0, img.track.GetWidth());
+}
+Plymouth.SetQuitFunction(quit_callback);

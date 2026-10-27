@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Quatzler"
+            }
+        ],
+        "Id": "ApertureCoreMaintenanceHall",
+        "License": "Private use only",
+        "Name": "Aperture Core Maintenance Hall"
+    }
+}

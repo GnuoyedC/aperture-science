@@ -1,0 +1,9 @@
+[Unit]
+Description=Aperture OS: check lock/logout screen compatibility after Plasma updates
+After=plasma-plasmashell.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/aperture-plasma-guard
+Nice=10
+

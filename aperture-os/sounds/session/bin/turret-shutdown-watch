@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""Hold a logind 'delay' inhibitor lock so the session (and audio access) stays
+alive until turret-sounds.service has played its stop sound. That unit is
+ordered after kwin, so kwin (and the HDMI signal) also waits for the sound.
+Fallback (no Plasma logout, e.g. `systemctl poweroff`): play the sound here.
+A second delay lock ("sleep") plays "Are you still there?" before suspend/hibernate."""
+import os
+import subprocess
+import time
+
+import gi
+gi.require_version("Gio", "2.0")
+from gi.repository import Gio, GLib
+
+SOUND = os.path.expanduser("~/.local/share/turret-sounds/disabled_4.wav")
+VOLUME = "0.4"
+UNIT = "turret-sounds.service"
+SLEEP_SOUND = os.path.expanduser("~/.local/share/turret-sounds/still_there.wav")
+
+bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
+locks = {}  # what ("shutdown" / "sleep") -> inhibitor fd
+
+
+def take_lock(what, why):
+    if what in locks:
+        return
+    reply, fds = bus.call_with_unix_fd_list_sync(
+        "org.freedesktop.login1", "/org/freedesktop/login1",
+        "org.freedesktop.login1.Manager", "Inhibit",
+        GLib.Variant("(ssss)", (what, "Turret sounds", why, "delay")),
+        GLib.VariantType("(h)"), Gio.DBusCallFlags.NONE, -1, None, None)
+    locks[what] = fds.get(reply.unpack()[0])
+
+
+def release_lock(what):
+    fd = locks.pop(what, None)
+    if fd is not None:
+        os.close(fd)
+
+
+def unit_state():
+    return subprocess.run(
+        ["systemctl", "--user", "show", "-p", "ActiveState", "--value", UNIT],
+        capture_output=True, text=True).stdout.strip()
+
+
+def wait_for_session_sound():
+    deadline = time.monotonic() + 1.0
+    while unit_state() == "active":  # stop not started (shutdown not via Plasma logout)
+        if time.monotonic() > deadline:
+            subprocess.run(["/usr/bin/pw-play", "--volume", VOLUME, SOUND], timeout=10)
+            return
+        time.sleep(0.1)
+    deadline = time.monotonic() + 8.0
+    while unit_state() == "deactivating" and time.monotonic() < deadline:
+        time.sleep(0.1)
+
+
+def on_prepare_shutdown(_conn, _sender, _path, _iface, _signal, params):
+    if params.unpack()[0]:
+        try:
+            wait_for_session_sound()
+        except Exception:
+            pass
+        release_lock("shutdown")
+    else:  # shutdown was cancelled
+        take_lock("shutdown", "Playing shutdown sound")
+
+
+def on_prepare_sleep(_conn, _sender, _path, _iface, _signal, params):
+    if params.unpack()[0]:
+        try:
+            subprocess.run(["/usr/bin/pw-play", "--volume", VOLUME, SLEEP_SOUND], timeout=4)
+        except Exception:
+            pass
+        release_lock("sleep")
+    else:  # resumed (or suspend cancelled)
+        take_lock("sleep", "Playing standby sound")
+
+
+for signal, handler in (("PrepareForShutdown", on_prepare_shutdown),
+                        ("PrepareForSleep", on_prepare_sleep)):
+    bus.signal_subscribe("org.freedesktop.login1", "org.freedesktop.login1.Manager",
+                         signal, "/org/freedesktop/login1", None,
+                         Gio.DBusSignalFlags.NONE, handler)
+take_lock("shutdown", "Playing shutdown sound")
+take_lock("sleep", "Playing standby sound")
+GLib.MainLoop().run()

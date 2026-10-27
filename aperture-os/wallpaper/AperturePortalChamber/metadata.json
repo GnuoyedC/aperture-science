@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Quatzler"
+            }
+        ],
+        "Id": "AperturePortalChamber",
+        "License": "Private use only",
+        "Name": "Aperture Portal Chamber"
+    }
+}

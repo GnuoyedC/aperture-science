@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="icon" type="String">
+      <default>aperture-os</default>
+    </entry>
+    <entry name="showFavorites" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showCategories" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="maxResults" type="Int">
+      <default>12</default>
+      <min>3</min>
+      <max>50</max>
+    </entry>
+    <!-- KActivities client id whose favourites ordering is used. Empty =
+         "aperture-os.launcher.favorites" (shared by all launcher instances).
+         Set to "org.kde.plasma.kickoff.favorites.instance-<id>" to reuse the
+         ordering of a former Kickoff instance. -->
+    <entry name="favoritesClientId" type="String">
+      <default></default>
+    </entry>
+    <!-- Seeded once into the (shared KActivities) favourites when there are
+         none yet. Exact desktop ids, "preferred://browser", or an id prefix
+         (e.g. "jetbrains-phpstorm" matches jetbrains-phpstorm-<uuid>.desktop).
+         "a|b|c" = first one that is installed. -->
+    <entry name="defaultFavorites" type="StringList">
+      <default>firefox-devedition.desktop|firefox.desktop|firefox_firefox.desktop|preferred://browser,org.kde.dolphin.desktop,kitty.desktop|org.kde.konsole.desktop,jetbrains-phpstorm</default>
+    </entry>
+    <entry name="favoritesSeeded" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="reduceMotion" type="Bool">
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>

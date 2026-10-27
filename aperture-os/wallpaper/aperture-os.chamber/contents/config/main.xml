@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="Image" type="String">
+      <label>Background image (empty = built-in test chamber)</label>
+      <default></default>
+    </entry>
+    <entry name="Scene" type="String">
+      <label>Motif / effect scene (chamber = built-in test chamber)</label>
+      <default>chamber</default>
+    </entry>
+    <entry name="Animate" type="Bool">
+      <label>Enable ambience animation</label>
+      <default>true</default>
+    </entry>
+    <entry name="Intensity" type="Double">
+      <label>Glow intensity (0..1)</label>
+      <default>0.6</default>
+    </entry>
+    <entry name="FrameRate" type="Int">
+      <label>Animation updates per second (low = less GPU)</label>
+      <default>10</default>
+    </entry>
+    <entry name="SceneGlows" type="Bool">
+      <label>Core / portal glows of the chosen motif (not for own images)</label>
+      <default>true</default>
+    </entry>
+    <entry name="Mirror" type="Bool">
+      <label>Mirror the scene horizontally (lettering is mirrored too)</label>
+      <default>false</default>
+    </entry>
+    <entry name="Zoom" type="Double">
+      <label>Zoom into the image (1 = fill screen, up to 2)</label>
+      <default>1.0</default>
+    </entry>
+    <entry name="FocusX" type="Double">
+      <label>Horizontal crop position (0 = left, 0.5 = centre, 1 = right)</label>
+      <default>0.5</default>
+    </entry>
+    <entry name="FocusY" type="Double">
+      <label>Vertical crop position (0 = top, 0.5 = centre, 1 = bottom)</label>
+      <default>0.5</default>
+    </entry>
+  </group>
+</kcfg>

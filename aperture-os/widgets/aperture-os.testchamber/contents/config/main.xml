@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="chamberNumber" type="Int">
+      <default>1</default>
+      <min>0</min>
+      <max>99</max>
+    </entry>
+    <entry name="tempWarning" type="Int">
+      <default>80</default>
+      <min>40</min>
+      <max>110</max>
+    </entry>
+    <!-- task bar (compact representation) -->
+    <entry name="panelLabel" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="panelLed" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="panelCpuTemp" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelCpuLoad" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelMemory" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelSwap" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelDisk" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelGpu" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelFan" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelPower" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelNetwork" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="panelUptime" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="clickToExpand" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- popup rows -->
+    <!-- rows (fixed order); rows without a sensor on this machine hide themselves -->
+    <entry name="showCore" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showPortal" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showPower" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showCpuTemp" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showCpuLoad" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showLoadAverage" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showGpu" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showFan" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showMemory" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showSwap" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showDisk" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showNetwork" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showUptime" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showSession" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="showHost" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="compactLayout" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="reduceMotion" type="Bool">
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>

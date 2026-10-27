@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Quatzler"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Aperture OS: shows the latest notifications as facility notices",
+        "Description[de]": "Aperture OS: zeigt die neuesten Benachrichtigungen als Anlagenmeldung",
+        "Icon": "preferences-desktop-notification",
+        "Id": "aperture-os.notice",
+        "License": "GPL-3.0-or-later",
+        "Name": "Aperture Notice",
+        "Version": "1.0.0",
+        "Website": ""
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

@@ -1,0 +1,7 @@
+# Editor/OS
+*~
+*.swp
+.directory
+.idea/
+# Temporary fetch files
+*.tmp.wav

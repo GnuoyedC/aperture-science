@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Aperture OS
+Description=Aperture Laboratories boot screen (rotating iris, progress line, LUKS prompt)
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/aperture-os
+ScriptFile=/usr/share/plymouth/themes/aperture-os/aperture-os.script

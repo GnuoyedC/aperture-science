@@ -1,0 +1,79 @@
+# German translation of aperture-os.sysmonitor (Aperture OS).
+# Source strings are English; this file restores the original German UI.
+msgid ""
+msgstr ""
+"Project-Id-Version: aperture-os.sysmonitor\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "Disk sensor:"
+msgstr "Datenträger-Sensor:"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Motion:"
+msgstr "Bewegung:"
+
+msgid "Network with history graph"
+msgstr "Netzwerk mit Verlaufskurve"
+
+msgid "Reduce animations"
+msgstr "Animationen reduzieren"
+
+msgid "Show:"
+msgstr "Anzeige:"
+
+msgid "Update interval (seconds):"
+msgstr "Aktualisierung (Sekunden):"
+
+msgid "automatic (root file system /)"
+msgstr "automatisch (Wurzeldateisystem /)"
+
+msgid "e.g. disk/all/usedPercent – IDs: »kstatsviewer --list«"
+msgstr "z. B. disk/all/usedPercent – IDs siehe »kstatsviewer --list«"
+
+msgid "Task bar"
+msgstr "Taskleiste"
+
+msgid "Show in the task bar:"
+msgstr "In der Taskleiste anzeigen:"
+
+msgid "CPU usage"
+msgstr "CPU-Auslastung"
+
+msgid "RAM usage"
+msgstr "RAM-Auslastung"
+
+msgid "Disk usage"
+msgstr "Datenträger-Belegung"
+
+msgid "Network download/upload rate"
+msgstr "Download-/Upload-Rate"
+
+msgid "Status:"
+msgstr "Status:"
+
+msgid "LED (worst of CPU, RAM, disk)"
+msgstr "LED (schlechtester Wert aus CPU, RAM, Datenträger)"
+
+msgid "Click:"
+msgstr "Klick:"
+
+msgid "Open the details popup"
+msgstr "Details-Popup öffnen"
+
+msgid "Popup"
+msgstr "Popup"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "RAM"
+msgstr "RAM"
+
+msgid "Disk"
+msgstr "Datenträger"

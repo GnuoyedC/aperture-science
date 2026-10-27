@@ -1,0 +1,12 @@
+[Unit]
+Description=Turret sound on shutdown/reboot (logind delay inhibitor)
+# Not tied to graphical-session.target: Plasma stops the session targets
+# before calling logind PowerOff, so this must survive until PrepareForShutdown.
+After=pipewire.service pipewire-pulse.service wireplumber.service
+
+[Service]
+ExecStart=%h/.local/bin/turret-shutdown-watch
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

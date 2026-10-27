@@ -1,0 +1,18 @@
+[Unit]
+Description=Turret sounds on login and session end
+PartOf=graphical-session.target
+After=graphical-session.target plasma-kwin_wayland.service plasma-plasmashell.service pipewire.service pipewire-pulse.service wireplumber.service
+Requires=pipewire.service
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+# Files have 1s leading silence so the HDMI sink can wake up without cutting the sound.
+# Volume 0.4 = ~40% (relative to the current system volume)
+ExecStart=/bin/sh -c 'sleep 3; /usr/bin/pw-play --volume 0.4 %h/.local/share/turret-sounds/deploy_2.wav'
+# Stop order is reversed: kwin (HDMI signal) waits until this sound is done.
+ExecStop=/usr/bin/pw-play --volume 0.4 %h/.local/share/turret-sounds/disabled_4.wav
+TimeoutStopSec=8
+
+[Install]
+WantedBy=graphical-session.target

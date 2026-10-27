@@ -1,0 +1,9 @@
+[Unit]
+Description=Aperture OS: Plasma-Guard kurz nach dem Login (entkoppelt vom Session-Start)
+
+[Timer]
+OnStartupSec=60
+Unit=aperture-plasma-guard.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+# Aperture OS - Plasma update guard
+#
+# 1. Loads the Aperture lock screen invisibly (QT_QPA_PLATFORM=offscreen). If that fails (e.g. after
+#    a Plasma update) it is disabled IMMEDIATELY -> the stock Breeze lock screen takes over on the
+#    next lock, so you never end up in the "screen locker is broken" emergency state.
+# 2. Loads the Aperture logout screen invisibly and reports errors.
+# 3. Compares the Plasma originals the Aperture copies are based on against baseline.sha256 and
+#    reports once when KDE changed them (then reconcile the copies, see README).
+#    The baseline only covers /usr/share files, so it is independent of distro and architecture.
+#
+#   aperture-plasma-guard                check (run by systemd at login + after Plasma updates)
+#   aperture-plasma-guard --status       only show, change nothing, no notification
+#   aperture-plasma-guard --rebaseline   adopt the current originals as the new baseline (after reconciling)
+#   aperture-plasma-guard --print-greeter   print the resolved kscreenlocker_greet path (used by install.sh)
+set -uo pipefail
+
+# find_libexec <name>: print the full path of a KDE libexec helper, whatever the distro layout:
+#   Debian/Ubuntu  /usr/lib/<multiarch>/libexec   Fedora  /usr/libexec or /usr/lib64/libexec
+#   Arch           /usr/lib                       openSUSE /usr/lib64/libexec ...
+# Order: qtpaths6 hints -> dpkg multiarch -> well-known dirs -> find below /usr/lib* and /usr/libexec.
+find_libexec() {
+    local name=$1 d m qt p
+    local -a dirs=()
+    for qt in qtpaths6 qtpaths-qt6 qtpaths; do
+        command -v "$qt" >/dev/null 2>&1 || continue
+        for p in QT_INSTALL_LIBEXECS QT_INSTALL_LIBS; do
+            d="$("$qt" --query "$p" 2>/dev/null)" || continue
+            [[ -n "$d" ]] && dirs+=("$d" "$d/libexec" "$(dirname "$d")/libexec")
+        done
+        break
+    done
+    if m="$(dpkg-architecture -qDEB_HOST_MULTIARCH 2>/dev/null)" && [[ -n "$m" ]]; then
+        dirs+=("/usr/lib/$m/libexec" "/usr/lib/$m")
+    fi
+    dirs+=(/usr/libexec /usr/lib64/libexec /usr/lib/libexec /usr/lib/kf6 /usr/lib64 /usr/lib)
+    for d in "${dirs[@]}"; do
+        [[ -x "$d/$name" && ! -d "$d/$name" ]] && { echo "$d/$name"; return 0; }
+    done
+    d="$(find /usr/lib* /usr/libexec -maxdepth 4 -name "$name" -type f -perm -u+x 2>/dev/null | head -1)"
+    [[ -n "$d" ]] && { echo "$d"; return 0; }
+    return 1
+}
+
+if [[ "${1:-}" == --print-greeter ]]; then
+    find_libexec kscreenlocker_greet || { echo "kscreenlocker_greet not found" >&2; exit 1; }
+    exit 0
+fi
+
+HERE="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/aperture-os"
+BASELINE="${APERTURE_GUARD_BASELINE:-$HERE/baseline.sha256}"
+GREETER="$(find_libexec kscreenlocker_greet || true)"
+LOGOUT="$(find_libexec ksmserver-logout-greeter || true)"
+UPSTREAM=(
+    /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/LockScreen.qml
+    /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/LockScreenUi.qml
+    /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/MainBlock.qml
+    /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/LockOsd.qml
+    /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/MediaControls.qml
+    /usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen/NoPasswordUnlock.qml
+    /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout/Logout.qml
+    /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/logout/LogoutButton.qml
+)
+MODE="${1:-check}"
+QML_ERR='Failed to load lockscreen QML|Error loading QML|is not a type|is not installed|ReferenceError|TypeError|Cannot assign'
+
+notify() { # notify <urgency> <summary> <body>
+    [[ "$MODE" == --status ]] && return
+    notify-send -a "Aperture OS" -u "$1" -i dialog-warning "$2" "$3" 2>/dev/null || true
+}
+log() { echo "[aperture-guard] $*"; }
+
+probe() { # probe <logfile> <cmd...>  -> runs a greeter offscreen for 6 s
+    local out=$1; shift
+    QT_QPA_PLATFORM=offscreen timeout -s KILL 6 "$@" >"$out" 2>&1
+    true
+}
+
+mkdir -p "$STATE"
+rc=0
+
+# --- 1. lock screen ---------------------------------------------------------------------------
+shell="$(kreadconfig6 --file plasmashellrc --group Shell --key ShellPackage)"
+if [[ "$shell" == aperture-os.shell && -n "$GREETER" ]]; then
+    probe "$STATE/guard-lockscreen.log" "$GREETER" --testing --shell aperture-os.shell
+    if grep -Eq "$QML_ERR" "$STATE/guard-lockscreen.log"; then
+        rc=1
+        log "Lock screen does NOT load: $(grep -Em1 "$QML_ERR" "$STATE/guard-lockscreen.log")"
+        if [[ "$MODE" != --status ]]; then
+            kwriteconfig6 --file plasmashellrc --group Shell --key ShellPackage --delete
+            echo "$(date -Is) disabled: $(grep -Em1 "$QML_ERR" "$STATE/guard-lockscreen.log")" >> "$STATE/guard.log"
+            notify critical "Aperture lock screen disabled" \
+                "It is no longer compatible after a Plasma update. The default lock screen is active again. Details: ~/.local/state/aperture-os/guard-lockscreen.log"
+        fi
+    else
+        log "Lock screen OK"
+    fi
+else
+    log "Lock screen: Aperture not active or greeter not found (skipped)"
+fi
+
+# --- 2. logout screen -------------------------------------------------------------------------
+lnf="$(kreadconfig6 --file kdeglobals --group KDE --key LookAndFeelPackage)"
+if [[ "$lnf" == aperture-os && -n "$LOGOUT" ]]; then
+    probe "$STATE/guard-logout.log" "$LOGOUT" --windowed --lookandfeel aperture-os
+    if grep -Eq "$QML_ERR" "$STATE/guard-logout.log"; then
+        rc=1
+        log "Logout screen has QML errors: $(grep -Em1 "$QML_ERR" "$STATE/guard-logout.log")"
+        notify normal "Aperture logout screen broken" \
+            "After a Plasma update. Details: ~/.local/state/aperture-os/guard-logout.log"
+    else
+        log "Logout screen OK"
+    fi
+fi
+
+# --- 3. upstream drift ----------------------------------------------------------------------------
+if [[ "$MODE" == --rebaseline ]]; then
+    {
+        echo "# Plasma $(plasmashell --version 2>/dev/null | awk '{print $2}') - $(date -I)"
+        sha256sum "${UPSTREAM[@]}"
+    } > "$BASELINE"
+    rm -f "$STATE/guard-drift.notified"
+    log "new baseline written: $BASELINE"
+    exit 0
+fi
+if [[ -f "$BASELINE" ]]; then
+    drift="$(grep -v '^#' "$BASELINE" | sha256sum --check --quiet 2>/dev/null | sed 's/: .*//' || true)"
+    if [[ -n "$drift" ]]; then
+        log "Plasma originals changed:"; echo "$drift" | sed 's/^/  /'
+        key="$(echo "$drift" | xargs sha256sum 2>/dev/null | sha256sum | cut -c1-16)"
+        if [[ "$(cat "$STATE/guard-drift.notified" 2>/dev/null)" != "$key" ]]; then
+            notify normal "Plasma update: reconcile Aperture copies" \
+                "KDE changed the lock/logout screen. Aperture keeps working; please reconcile when convenient (guard/README.md)."
+            [[ "$MODE" != --status ]] && echo "$key" > "$STATE/guard-drift.notified"
+        fi
+    else
+        log "Plasma originals unchanged"
+    fi
+fi
+exit $rc

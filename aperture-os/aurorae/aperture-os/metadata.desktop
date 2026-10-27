@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Aperture OS
+Comment=Aperture OS window decoration - dark title bar, 1px frame, orange focus
+X-KDE-PluginInfo-Author=Quatzler
+X-KDE-PluginInfo-Name=aperture-os
+X-KDE-PluginInfo-Version=1.0.0
+X-KDE-PluginInfo-License=GPL-3.0-or-later
+X-KDE-PluginInfo-EnabledByDefault=true

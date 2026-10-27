@@ -1,0 +1,15 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [{ "Name": "Quatzler" }],
+        "Category": "",
+        "Description": "Aperture OS - your KDE desktop running inside an Aperture test facility. Keeps your icons and cursors.",
+        "Id": "aperture-os",
+        "License": "GPL-3.0-or-later",
+        "Name": "Aperture OS",
+        "Version": "1.0.0",
+        "Website": ""
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Aperture;Portal;",
+    "X-Plasma-APIVersion": "2"
+}

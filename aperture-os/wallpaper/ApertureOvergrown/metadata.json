@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Quatzler"
+            }
+        ],
+        "Id": "ApertureOvergrown",
+        "License": "Private use only",
+        "Name": "Aperture Overgrown"
+    }
+}
