@@ -1,0 +1,35 @@
+/* Aperture-Dark New Tab / Home page (optional).
+ * Needs about:config -> toolkit.legacyUserProfileCustomizations.stylesheets = true */
+
+@-moz-document url("about:newtab"), url("about:home"), url("about:privatebrowsing") {
+  body {
+    background: #090F14 url("aperture-newtab.svg") center / cover no-repeat fixed !important;
+    color: #D2E1E9 !important;
+  }
+  .top-site-outer .tile, .top-site-outer .top-site-icon {
+    background-color: rgba(15, 24, 32, 0.85) !important;
+    border: 1px solid #2B4C5C !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+  }
+  .top-site-outer:hover .tile {
+    border-color: #1AA5DA !important;
+    box-shadow: 0 0 12px rgba(26, 165, 218, 0.35) !important;
+  }
+  .top-site-outer .title {
+    color: #8AA3B2 !important;
+  }
+  .search-handoff-button, .search-wrapper input, .fake-textbox {
+    background-color: rgba(10, 18, 24, 0.9) !important;
+    border: 1px solid #2B4C5C !important;
+    border-radius: 6px !important;
+    color: #D2E1E9 !important;
+  }
+  .search-handoff-button:hover, .search-wrapper input:focus {
+    border-color: #1AA5DA !important;
+    box-shadow: 0 0 12px rgba(26, 165, 218, 0.35) !important;
+  }
+  .logo-and-wordmark {
+    opacity: 0.85;
+  }
+}

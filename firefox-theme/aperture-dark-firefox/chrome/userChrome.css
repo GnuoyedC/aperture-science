@@ -1,0 +1,60 @@
+/* Aperture-Dark HUD styling for Firefox's interface (optional).
+ * Needs about:config -> toolkit.legacyUserProfileCustomizations.stylesheets = true
+ * Works with or without the Aperture Dark theme add-on, but is designed for it. */
+
+:root {
+  --ap-orange: #F28C28;
+  --ap-blue: #1AA5DA;
+  --ap-frame: #2B4C5C;
+  --ap-pale: #D2E1E9;
+}
+
+/* Tabs: squarer HUD panels; the selected one gets a teal frame and an amber light strip */
+.tab-background {
+  border-radius: 4px !important;
+}
+.tab-background:is([selected], [multiselected]) {
+  outline: 1px solid var(--ap-frame) !important;
+  outline-offset: -1px !important;
+  box-shadow: inset 0 -2px 0 var(--ap-orange), 0 0 10px rgba(26, 165, 218, 0.18) !important;
+  background-image: linear-gradient(to bottom, rgba(26, 165, 218, 0.10), transparent 60%) !important;
+}
+.tabbrowser-tab:hover > .tab-stack > .tab-background:not([selected]) {
+  outline: 1px solid rgba(43, 76, 92, 0.6) !important;
+  outline-offset: -1px !important;
+}
+.tab-throbber[busy]::before {
+  fill: var(--ap-orange) !important;
+}
+
+/* Toolbar: teal hairline, like the widget panels */
+#nav-bar {
+  border-bottom: 1px solid var(--ap-frame) !important;
+  box-shadow: none !important;
+}
+
+/* URL bar: HUD readout that lights up blue when focused */
+#urlbar-background {
+  border-radius: 4px !important;
+}
+#urlbar[focused] > #urlbar-background {
+  outline: 1px solid var(--ap-blue) !important;
+  box-shadow: 0 0 12px rgba(26, 165, 218, 0.35) !important;
+}
+#urlbar-input {
+  letter-spacing: 0.02em;
+}
+
+/* Menus and panels: teal frame, sharper corners */
+menupopup, panel {
+  --panel-border-radius: 6px !important;
+  --panel-border-color: var(--ap-frame) !important;
+}
+menupopup menuitem[_moz-menuactive], menupopup menu[_moz-menuactive] {
+  box-shadow: inset 2px 0 0 var(--ap-orange) !important;
+}
+
+/* Bookmarks toolbar items */
+#PersonalToolbar toolbarbutton.bookmark-item:hover {
+  box-shadow: inset 0 -2px 0 var(--ap-blue) !important;
+}
