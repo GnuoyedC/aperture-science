@@ -11,6 +11,7 @@
 
 </div>
 
+# ORIGINAL CAN BE FOUND HERE: https://gitlab.com/Quatzler/aperture-os
 Welcome to **Aperture OS**! A KDE Plasma 6 design system that turns an existing Kubuntu desktop into a believable
 Aperture Laboratories test facility – lock screen, login, boot screen, widgets, animated wallpaper, sounds and a
 matching terminal – **without** replacing your icons, cursors, shell or file manager.
